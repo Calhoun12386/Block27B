@@ -1,4 +1,6 @@
 import { useState } from "react";
+import {useSelector, useDispatch} from "react-redux";
+import {selectBalance, deposit,  withdrawal, transfer} from "./transactionsSlice"
 
 import "./transactions.scss";
 
@@ -7,9 +9,12 @@ import "./transactions.scss";
  */
 export default function Transactions() {
   // TODO: Get the balance from the Redux store using the useSelector hook
-  const balance = 0;
+  //get data from store
+  const balance = useSelector(selectBalance);
+  const dispatch = useDispatch();
 
   const [amountStr, setAmountStr] = useState("0.00");
+  const [recipient, setRecipient] = useState("");
 
   /** Dispatches a transaction action based on the form submission. */
   const onTransaction = (e) => {
@@ -20,6 +25,24 @@ export default function Transactions() {
     const action = e.nativeEvent.submitter.name;
 
     const amount = +amountStr;
+
+   switch(action){
+
+    case "deposit":
+      dispatch(deposit({amount}));
+      break;
+    case "withdraw":
+      dispatch(withdrawal({amount}));
+      break;
+    case "transfer":
+      dispatch(transfer({amount, name: recipient}));
+      break; 
+   
+   }
+    setAmountStr("0")
+    setRecipient("")
+      
+
 
     // TODO: Dispatch the appropriate transaction action based on `action`
   };
@@ -45,16 +68,19 @@ export default function Transactions() {
             />
           </label>
           <div>
-            <button default name="deposit">
+            <button type="submit" name="deposit">
               Deposit
             </button>
             <button name="withdraw">Withdraw</button>
           </div>
-        </div>
+        </div><picture>
+          <source media="(min-width: )" srcset="" />
+          <img src="" alt="" />
+        </picture>
         <div className="form-row">
           <label>
             Transfer to
-            <input type="text" placeholder="Recipient Name" name="recipient" />
+            <input type="text" placeholder="Recipient Name" name="recipient" value={recipient} onChange={(e)=>setRecipient(e.target.value)}/>
           </label>
           <button name="transfer">Transfer</button>
         </div>
@@ -62,3 +88,5 @@ export default function Transactions() {
     </section>
   );
 }
+
+
